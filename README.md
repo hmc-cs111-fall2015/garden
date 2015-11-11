@@ -5,9 +5,10 @@
 [Statements1]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Statements1
 [Statements2]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Statements2
 [Variables]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Variables
-[Functions1]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions1
-[Functions2]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions2
-[Functions3]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions3
+[Functions]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions
+[DynamicScope]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/DynamicScope
+[StaticScope]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/StaticScope
+[Recursion]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Recursion
 [Dynamic Scopes]: http://en.wikipedia.org/wiki/Scope_%28computer_science%29#Dynamic_scoping
 [Static Scopes]: http://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scoping
 
@@ -74,6 +75,7 @@ are
   - [`Statements2`][Statements2] : adds conditionals
   - [`Names`][Names] : adds named constants
   - [`Variables`][Variables] : adds variables, i.e., mutable state
-  - [`Functions1`][Functions1] : adds function definitions and function calls, but the implementation doesn't provide scopes
-  - [`Functions2`][Functions2] : adds support for scopes, but they're [dynamic][Dynamic Scopes]
-  - [`Functions3`][Functions3] : adds support for [static (lexical) scopes][Static Scopes]
+  - [`Functions`][Functions] : adds function definitions and function calls, but the implementation doesn't provide scopes
+  - [`DynamicScope`][DynamicScope] : adds support for scopes, but they're [dynamic][Dynamic Scopes]
+  - [`StaticScope`][StaticScope] : adds support for [static (lexical) scopes][Static Scopes]
+  - [`Recursion`][Recursion] : adds support for [static (lexical) scopes][Static Scopes]
