@@ -144,7 +144,7 @@ object StmtInterpreter {
     val ρ1: Environment = ρ + (f.name → a)
 
     // (3) Make a closure for the function 
-    val closure: Value = Closure(f, ρ)   
+    val closure: Value = Closure(f, ρ1)   // Note: using ρ1 enables recursion
 
     // (4) Bind the new address to the closure in the store
     val σ1 = σ + (a → closure)

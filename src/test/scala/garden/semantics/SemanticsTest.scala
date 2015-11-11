@@ -214,7 +214,6 @@ class GardenStmtSemanticsTests extends FunSpec
         give (Var("x") → 1000, Var("result") → 1)
     }
 
-    // note: this test intentionally fails
     it("should allow recursion") {
       program("""var result := 0; 
                  def fact(n) := { 
