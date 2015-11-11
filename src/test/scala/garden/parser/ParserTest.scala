@@ -138,4 +138,16 @@ class GardenStmtParserTests extends FunSpec with LangParseMatchers[AST] {
     }
   }
   
+  describe("Variable definition") {
+    it("assigns the result of an expression to a variable") {
+      program("var x := 1") should parseAs ('x |←| 1)
+    }
+  }
+  
+  describe("Variable redefinition") {
+    it("assigns the result of an expression to a variable") {
+      program("x := 1") should parseAs ('x |:=| 1)
+    }
+  }
+  
 }

@@ -19,6 +19,7 @@ import garden.ir.Var
 
         s ∈ Stmt ::= `print` e | s `;` s
                   |  `if0` `(` e `)` `then` `{` s `}` `else` `{` s `}`      
+                  |  `var` x `:=` e | x `:=` e
         
         e ∈ Expr ::= n | x | e op e | `(` e `)`
         
@@ -36,6 +37,8 @@ object GardenParser extends JavaTokenParsers with PackratParsers {
     /** statements **/
     lazy val stmt: PackratParser[Stmt] = 
       (   rep1sep(stmt, ";") ^^ Block 
+        | "var"~variable~":="~expr ^^ {case "var"~x~":="~e ⇒ x |←| e} 
+        | variable~":="~expr ^^ {case x~":="~e ⇒ x |:=| e}           
         | "print"~>expr ^^ Print
         | ifStmt
         | failure("expected a statement"))

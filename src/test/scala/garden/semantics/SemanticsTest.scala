@@ -125,26 +125,65 @@ class GardenExprSemanticsTests extends FunSpec
 }
 
 class GardenStmtSemanticsTests extends FunSpec
-    with LangInterpretMatchers[Stmt, Result] {
+    with LangInterpretMatchers[Stmt, Result] 
+    with StoreMatchers[Result, Var, Value] {
 
   override val parser =
     (s: String) ⇒ GardenParser.parseAll(GardenParser.stmt, s)
 
   override val interpreter = StmtInterpreter.eval _
-
+  
+  override def lookup(x: Var, r: Result): Option[Value] = r get x
+  
   describe("Blocks") {
     it("combine two or more statements, separated by a semicolon") {
-      program("print 1+1; print LtUaE") should compute (())
+      program("print 1+1; print LtUaE") should give ( )
+    }
+    
+    it("combine two or more statements, separated by a semicolon and updates the store") {
+      program("var x := 1; var y := x") should give(Var("x") → 1, Var("y") → 1)
     }
   }
   
   describe("If0 statements") {
     it("have a evaluate the true branch if the condition is 0") {
-      program("if0 (0) then {print 0} else {print 1}") should compute ( () )
+      program("if0 (0) then {print 0} else {print 1}") should give ( )
     }
     
-    it("have a evaluate the false branch if the condition is not 0") {
-      program("if0 (1) then {print 0} else {print 1}") should compute ( () )
+     it("execute the true branch if the condition is true and update the store") {
+      program("""var result := -1; 
+                 if0 (0) 
+                 then { result:=0 } 
+                 else { result:=10000 }""") should
+        give (Var("result") → 0)
+    }
+
+    it("execute the false branch if the condition is false") {
+      program("""var result := -1; 
+                 if0 (1) 
+                 then { result:=0 } 
+                 else { result:=10000 }""") should
+        give (Var("result") → 10000)
+    }
+
+    it("can have complex conditions") {
+      program("""var result := -1; 
+                 if0 (1-1) 
+                 then { result:=0 } 
+                 else { result:=10000 }""") should
+        give (Var("result") → 0)
+    }
+  }
+  
+  describe("Variable definition") {
+    it("assigns the result of an expression to a variable") {
+      program("var x := 1") should give (Var("x") → 1)
+    }
+  }
+
+  describe("Variable redefinition") {
+    it("assigns the result of an expression to a variable") {
+      program("var x := 0; x := 1") should give (Var("x") → 1)
     }
   }
 

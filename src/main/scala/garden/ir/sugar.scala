@@ -27,4 +27,14 @@ package object ir {
     def |*|(right: Expr) = Mult(left, right)
     def |/|(right: Expr) = Div(left, right)
   }
+  
+  // to use a variable as part of an assignment
+  implicit def symbolToStmtBuilder(s: Symbol) = 
+    new StmtBuilder(Var(s.toString.tail))
+
+  // to build up statements using infix notation from left to right...
+  implicit class StmtBuilder(val left: Var) {
+    def |←|(right: Expr) = Set(left, right)
+    def |:=|(right: Expr) = Update(left, right)
+  }
 }

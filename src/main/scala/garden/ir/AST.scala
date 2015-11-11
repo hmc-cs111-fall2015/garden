@@ -16,4 +16,5 @@ sealed abstract class Stmt extends AST
 case class Print(expr: Expr) extends Stmt
 case class Block(statements: Seq[Stmt]) extends Stmt
 case class If0(condition: Expr, trueBranch: Stmt, falseBranch: Stmt) extends Stmt
-
+case class Set(lValue: Var, rValue: Expr) extends Stmt
+case class Update(lValue: Var, rValue: Expr) extends Stmt

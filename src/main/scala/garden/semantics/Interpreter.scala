@@ -33,6 +33,8 @@ object StmtInterpreter {
     case Print(e)         ⇒ evalPrint(e, σ)
     case Block(stmts)     ⇒ evalBlock(stmts, σ)
     case If0(e, s_t, s_f) ⇒ evalIf0(e, s_t, s_f, σ)
+    case Set(x, e)        ⇒ evalAssign(x, e, σ)
+    case Update(x, e)     ⇒ evalUpdate(x, e, σ)    
   }
 
   /** print **/
@@ -42,11 +44,30 @@ object StmtInterpreter {
 
     // (2) print the result
     println(v)
+    
+    σ // printing doesn't affect the result
   }
   
   /** blocks **/
   def evalBlock(stmts: Seq[Stmt], σ: Store): Result = 
-    stmts foreach {evalS(_, σ)}
+    if (stmts.isEmpty)
+      σ  // Empty blocks don't affect the result
+    else {
+      // (1) evaluate 1st statement
+      val σ1 = evalS(stmts.head, σ)  
+
+      // (2) use result to evaluate rest of block
+      evalS(Block(stmts.tail), σ1)  
+    }
+  /**
+   * Note: we could also have written this code using a left-fold:
+   *       
+      def doNext(store: Store, stmt: Stmt): Result = 
+        evalS(stmt, store)
+        
+      ( σ /: stmts )(doNext)
+   * 
+   */
     
   /** if0 **/
   def evalIf0(condition: Expr, trueBranch: Stmt, falseBranch: Stmt,
@@ -59,5 +80,36 @@ object StmtInterpreter {
       evalS(trueBranch, σ)
     else 
       evalS(falseBranch, σ)
+  }
+  
+    /** variable creation **/
+  def evalAssign(variable: Var, expr: Expr, σ: Store): Result = {
+    // error checking: make sure that var is not defined
+    require(!(σ contains variable), 
+            s"Redefinition of variable ${variable.name}")
+    
+    // (1) Evaluate the right-hand side 
+    val value = evalE(expr, σ)
+    
+    // (2) Bind the name to the value in the store
+    val σ1 = σ + (variable → value)
+    
+    σ1
+  }
+  
+  /** variable update **/
+  def evalUpdate(variable: Var, expr: Expr, σ: Store): Result = {
+    // error checking: make sure that var is defined
+    require(σ contains variable, 
+            s"""Cannot update non-existent variable ${variable.name}. 
+    Try var ${variable.name} := ... ?""")
+            
+    // (1) Evaluate the right-hand side 
+    val value = evalE(expr, σ)
+    
+    // (3) Bind the name to the new value in the store
+    val σ1 = σ + (variable → value)
+    
+    σ1
   }
 }
