@@ -35,6 +35,8 @@ object StmtInterpreter {
     case If0(e, s_t, s_f) ⇒ evalIf0(e, s_t, s_f, σ)
     case Set(x, e)        ⇒ evalAssign(x, e, σ)
     case Update(x, e)     ⇒ evalUpdate(x, e, σ)    
+    case f: FuncDef       ⇒ evalFuncDef(f, σ)   
+    case Call(f, args)    ⇒ evalCall(f, args, σ)    
   }
 
   /** print **/
@@ -75,8 +77,11 @@ object StmtInterpreter {
     // (1) evaluate condition
     val conditionValue = evalE(condition, σ)
     
+    // error checking: condition must be a number
+    require(conditionValue.isLeft, "condition must be a number")
+    
     // (2) based on condition's value, evaluate true or false branch
-    if (conditionValue == 0)
+    if (conditionValue.left.get == 0)
       evalS(trueBranch, σ)
     else 
       evalS(falseBranch, σ)
@@ -111,5 +116,41 @@ object StmtInterpreter {
     val σ1 = σ + (variable → value)
     
     σ1
+  }
+  
+  /** function definitions **/
+  def evalFuncDef(f: FuncDef, σ: Store): Result = {
+    // (1) Bind the function name to its value in the store
+    val σ1: Store = σ + (f.name → f)
+
+    σ1
+  }
+  
+  def evalCall(f: Var, args: List[Expr], σ: Store) = {
+
+    // (1) Lookup the function, to get its value
+    val func: Value = evalE(f, σ)
+
+    // type checking: require f to be a function
+    require(func.isRight, s"cannot call ${f.name}: it is not a function")
+
+    val FuncDef(name, params, body) = func.right.get
+
+    // error checking: require |args| = |params|
+    val argsLength = args.length
+    val paramsLength = params.length
+    require(args.length == params.length,
+      s"${f.name} expects $paramsLength arg(s) but got $argsLength")
+
+    // (2) evaluate the arguments
+    val argValues = args map (evalE(_, σ))
+
+    // (3) bind each parameter name to its value in the store
+    val σ1: Store = σ ++ (params zip argValues)
+
+    // (4) evaluate the body with the new store
+    val σ2 = evalS(body, σ1)
+
+    σ2
   }
 }

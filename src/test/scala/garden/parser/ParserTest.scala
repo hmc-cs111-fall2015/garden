@@ -150,4 +150,37 @@ class GardenStmtParserTests extends FunSpec with LangParseMatchers[AST] {
     }
   }
   
+    describe("Function definitions") {
+    it("have a name, parameters, and a body") {
+      program("def double(x) := { var result := 2 * x }") should 
+        parseAs (FuncDef('double, List('x), 'result |←| (2 |*| 'x)))
+    }
+
+    it("can take zero arguments") {
+      program("def f() := { var result := 2 }") should 
+        parseAs (FuncDef('f, List(), 'result |←| 2))
+    }
+    
+    it("can take multiple arguments") {
+      program("def f(x, y, z) := { var result := x * y * z }") should 
+        parseAs (FuncDef('f, List('x, 'y, 'z), 'result |←| ('x |*| 'y |*| 'z)))
+    }
+    
+  }
+  
+  describe("Function calls") {
+
+    it("are valid state,emt") {
+      program("double(2)") should parseAs ( Call('double, List(2)) )
+    }
+    
+    it("can pass zero arguments") {
+      program("f()") should parseAs ( Call('f, List()) )
+    }
+    
+    it("can pass multiple arguments") {
+      program("f(1, 2*3)") should parseAs ( Call('f, List(1, 2 |*| 3)) )
+    }
+
+  }
 }

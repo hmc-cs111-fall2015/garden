@@ -187,4 +187,54 @@ class GardenStmtSemanticsTests extends FunSpec
     }
   }
 
+  describe("Function calls") {
+
+    it("evaluate the arguments, bind the results to the parameters and execute the body") {
+      program("var result := 0; def double(x) := {result := 2 * x}; double(2)") should
+        give (Var("result") → 4)
+    }
+
+    it("should have access to global variables") {
+      program("var x := 3; var result := 0; def addX(y) := {result := x + y}; addX(2)") should
+        give (Var("result") → 5)
+    }
+
+    // note: this test intentionally fails
+    it("should have static scope") {
+      program("var result := 0; def addX(y) := {result := x + y}; addX(2); var x := 3 ") should
+        raiseError[LookupException]
+
+      program("var result := 0; def f(x) := {g(x+2)}; def g(y) := {result := x + y}; f(2)") should 
+        raiseError[LookupException]
+    }
+
+    // note: this test intentionally fails
+    it("should respect local and global scope") {
+      program("var x := 1000; var result := 0; def id(x) := {result := x; x := result}; id(1)") should
+        give (Var("x") → 1000, Var("result") → 1)
+    }
+
+    // note: this test intentionally fails
+    it("should allow recursion") {
+      program("""var result := 0; 
+                 def fact(n) := { 
+                    if0 (n) 
+                    then {result := 1} 
+                    else {fact(n - 1); result := n * result}
+                 }; 
+                 fact(5)""") should give (Var("result") → 120)
+    }
+    
+    it("should technically allow higher-order functions") {
+        program("""var result :=0;
+                   var G := 0; 
+                   def f(x) := {
+                     def g(y) := {result := x+y}; 
+                     G:=g
+                   }; 
+                   f(2); 
+                   G(3)""") should give (Var("result") → 5)
+    }
+
+  }
 }
