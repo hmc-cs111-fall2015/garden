@@ -1,13 +1,13 @@
 [Prolog]: semantics.pl
 [LIP]: https://pragprog.com/book/tpdsl/language-implementation-patterns
-[Expressions]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Expressions
-[Names]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Names
-[Statements1]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Statements1
-[Statements2]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Statements2
-[Variables]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Variables
-[Functions1]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Functions1
-[Functions2]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Functions2
-[Functions3]: https://github.com/hmc-cs111-fall2015/variables-and-functions/releases/tag/Functions3
+[Expressions]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Expressions
+[Names]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Names
+[Statements1]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Statements1
+[Statements2]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Statements2
+[Variables]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Variables
+[Functions1]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions1
+[Functions2]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions2
+[Functions3]: https://github.com/hmc-cs111-fall2015/garden/releases/tag/Functions3
 [Dynamic Scopes]: http://en.wikipedia.org/wiki/Scope_%28computer_science%29#Dynamic_scoping
 [Static Scopes]: http://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scoping
 
