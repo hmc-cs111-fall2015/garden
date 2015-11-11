@@ -27,6 +27,7 @@ object StmtInterpreter {
   def eval(stmt: Stmt): Result = stmt match {
     case Print(e)         ⇒ evalPrint(e)
     case Block(stmts)     ⇒ evalBlock(stmts)
+    case If0(e, s_t, s_f) ⇒ evalIf0(e, s_t, s_f)
   }
 
   /** print **/
@@ -41,4 +42,16 @@ object StmtInterpreter {
   /** blocks **/
   def evalBlock(stmts: Seq[Stmt]): Result = 
     stmts foreach eval
+    
+  /** if0 **/
+  def evalIf0(condition: Expr, trueBranch: Stmt, falseBranch: Stmt) = {
+    // (1) evaluate condition
+    val conditionValue = evalE(condition)
+    
+    // (2) based on condition's value, evaluate true or false branch
+    if (conditionValue == 0)
+      eval(trueBranch)
+    else 
+      eval(falseBranch)
+  }
 }

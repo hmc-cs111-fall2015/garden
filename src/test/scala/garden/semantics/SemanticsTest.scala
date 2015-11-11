@@ -127,5 +127,15 @@ class GardenStmtSemanticsTests extends FunSpec
       program("print 1+1; print 3") should compute (())
     }
   }
+  
+  describe("If0 statements") {
+    it("have a evaluate the true branch if the condition is 0") {
+      program("if0 (0) then {print 0} else {print 1}") should compute ( () )
+    }
+    
+    it("have a evaluate the false branch if the condition is not 0") {
+      program("if0 (1) then {print 0} else {print 1}") should compute ( () )
+    }
+  }
 
 }

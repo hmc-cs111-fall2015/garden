@@ -9,6 +9,7 @@ import garden.ir.Num
 import garden.ir.Print
 import garden.ir.Stmt
 import garden.ir.Block
+import garden.ir.If0
 
 /**
  * The parser accepts the following language
@@ -16,6 +17,7 @@ import garden.ir.Block
                 n ∈ ℤ
 
         s ∈ Stmt ::= `print` e | s `;` s
+                  |  `if0` `(` e `)` `then` `{` s `}` `else` `{` s `}`      
         
         e ∈ Expr ::= n | e op e | `(` e `)`
         
@@ -33,7 +35,14 @@ object GardenParser extends JavaTokenParsers with PackratParsers {
     lazy val stmt: PackratParser[Stmt] = 
       (   rep1sep(stmt, ";") ^^ Block 
         | "print"~>expr ^^ Print
+        | ifStmt
         | failure("expected a statement"))
+        
+    // if stmts
+    def ifStmt: Parser[If0] =
+      "if0"~"("~expr~")"~"then"~"{"~stmt~"}"~"else"~"{"~stmt~"}" ^^
+         { case "if0"~"("~c~")"~"then"~"{"~t~"}"~"else"~"{"~f~"}" ⇒ If0(c,t,f) }
+
         
     /** expressions **/
     lazy val expr: PackratParser[Expr] = 

@@ -115,4 +115,18 @@ class GardenStmtParserTests extends FunSpec with LangParseMatchers[AST] {
     }
   }
   
+  describe("If0 statements") {
+    it("have a simple condition, true branch, and false branch") {
+      program("if0 (0) then {print 0} else {print 1}") should 
+        parseAs (If0(0, Print(0), Print(1)))
+    }
+
+    it("have a comples condition, true branch, and false branch") {
+      var trueBlock = Block(List(Print(0), Print(0)))
+      var falseBlock = Block(List(Print(1), Print(1)))
+      program("if0 (1-1) then {print 0; print 0} else {print 1; print 1}") should 
+        parseAs (If0(1|-|1, trueBlock, falseBlock))
+    }
+  }
+  
 }
