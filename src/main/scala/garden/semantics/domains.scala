@@ -9,14 +9,17 @@ package object semantics {
    * Domains
    */
   type Value = Either[Int, FuncDef]  
-  type Result = Store
+  type Result = (Environment, Store)
   
-  type Store = LookupTable[Var, Value]
+  type Address = Int
+  type Environment = LookupTable[Var, Address]
+  type Store = LookupTable[Address, Value]
   
    /**
    * Initial values
    */
-  val σ0: Store = LookupTable.empty[Var, Value] + (Var("LtUaE") → 42)
+  val ρ0: Environment = LookupTable.empty[Var, Address] + (Var("LtUaE") → 0)
+  val σ0: Store = LookupTable.empty[Address, Value] + (0 → 42)
   
   /**
    * Implicit conversions

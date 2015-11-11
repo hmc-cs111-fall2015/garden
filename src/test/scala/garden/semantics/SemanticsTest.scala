@@ -133,8 +133,10 @@ class GardenStmtSemanticsTests extends FunSpec
 
   override val interpreter = StmtInterpreter.eval _
   
-  override def lookup(x: Var, r: Result): Option[Value] = r get x
-  
+  override def lookup(x: Var, r: Result): Option[Value] = r match {
+    case (ρ, σ) ⇒ (ρ get x) flatMap (σ get _)
+  }
+
   describe("Blocks") {
     it("combine two or more statements, separated by a semicolon") {
       program("print 1+1; print LtUaE") should give ( )
@@ -208,7 +210,6 @@ class GardenStmtSemanticsTests extends FunSpec
         raiseError[LookupException]
     }
 
-    // note: this test intentionally fails
     it("should respect local and global scope") {
       program("var x := 1000; var result := 0; def id(x) := {result := x; x := result}; id(1)") should
         give (Var("x") → 1000, Var("result") → 1)
