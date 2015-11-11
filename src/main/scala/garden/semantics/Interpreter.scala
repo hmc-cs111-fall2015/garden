@@ -143,8 +143,11 @@ object StmtInterpreter {
     // (2) Bind the function name to the new address in the environment
     val ρ1: Environment = ρ + (f.name → a)
 
-    // (3) Bind the new address to the definition in the store
-    val σ1: Store = σ + (a → f)
+    // (3) Make a closure for the function 
+    val closure: Value = Closure(f, ρ)   
+
+    // (4) Bind the new address to the closure in the store
+    val σ1 = σ + (a → closure)
 
     (ρ1, σ1)
   }
@@ -157,7 +160,7 @@ object StmtInterpreter {
     // type checking: require f to be a function
     require(func.isRight, s"cannot call ${f.name}: it is not a function")
 
-    val FuncDef(name, params, body) = func.right.get
+    val Closure(FuncDef(name, params, body), ρC) = func.right.get
 
     // error checking: require |args| = |params|
     val argsLength = args.length
@@ -171,15 +174,23 @@ object StmtInterpreter {
     // (3) allocate space for each parameter
     val addrs: Seq[Address] = params map (_ ⇒ alloc())
     
-    // (4) bind each parameter name to its address in the environment
-    val ρ1: Environment = ρ ++ (params zip addrs)
+    // (4) bind each parameter name to its address in the closure's environment
+    val ρC1: Environment = ρC ++ (params zip addrs)
     
     // (5) bind each parameter address to its corresponding value
     val σ1: Store = σ ++ (addrs zip argValues)
 
     // (6) evaluate the body with the new environment and store
-    val (ρ2, σ2) = evalS(body, ρ1, σ1)
+    val (ρ2, σ2) = evalS(body, ρC1, σ1)
 
+    /** WARNING: here's a naïve way to do garbage collection, but it doesn't 
+     *  work because closures can capture addresses that live longer than this 
+     *  function call:
+     *  
+         val σ3 = σ2 -- addrs
+     *  
+     */
+    
     (ρ, σ2)     // Function calls don't affect the *current* environment
   }
 }

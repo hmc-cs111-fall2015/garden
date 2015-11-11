@@ -201,7 +201,6 @@ class GardenStmtSemanticsTests extends FunSpec
         give (Var("result") → 5)
     }
 
-    // note: this test intentionally fails
     it("should have static scope") {
       program("var result := 0; def addX(y) := {result := x + y}; addX(2); var x := 3 ") should
         raiseError[LookupException]

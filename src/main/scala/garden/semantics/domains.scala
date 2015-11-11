@@ -8,12 +8,13 @@ package object semantics {
   /**
    * Domains
    */
-  type Value = Either[Int, FuncDef]  
+  type Value = Either[Int, Closure]  
   type Result = (Environment, Store)
   
   type Address = Int
   type Environment = LookupTable[Var, Address]
   type Store = LookupTable[Address, Value]
+  case class Closure(f: FuncDef, ρ: Environment)  
   
    /**
    * Initial values
@@ -27,7 +28,6 @@ package object semantics {
   implicit def intToValue(i: Int): Value = Left(i)
   implicit def valueToInt(v: Value): Int = v.left.get
 
-  implicit def funcdefToValue(f: FuncDef): Value = Right(f)
-  implicit def valueToFuncdef(v: Value): FuncDef = v.right.get
-
+  implicit def closureToValue(c: Closure): Value = Right(c)
+  implicit def valueToClosure(v: Value): Closure = v.right.get
 }
