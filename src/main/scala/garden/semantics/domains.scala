@@ -7,4 +7,5 @@ package object semantics {
    * Domains
    */
   type Value = Int
+  type Result = Unit
 }

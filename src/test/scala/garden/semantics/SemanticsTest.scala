@@ -113,3 +113,19 @@ class GardenExprSemanticsTests extends FunSpec
 
   }
 }
+
+class GardenStmtSemanticsTests extends FunSpec
+    with LangInterpretMatchers[Stmt, Result] {
+
+  override val parser =
+    (s: String) ⇒ GardenParser.parseAll(GardenParser.stmt, s)
+
+  override val interpreter = StmtInterpreter.eval _
+
+  describe("Blocks") {
+    it("combine two or more statements, separated by a semicolon") {
+      program("print 1+1; print 3") should compute (())
+    }
+  }
+
+}

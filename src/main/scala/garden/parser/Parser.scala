@@ -3,15 +3,19 @@ package garden.parser
 import scala.language.postfixOps
 import scala.util.parsing.combinator.JavaTokenParsers
 import scala.util.parsing.combinator.PackratParsers
-
 import garden.ir.Expr
 import garden.ir.ExprBuilder
 import garden.ir.Num
+import garden.ir.Print
+import garden.ir.Stmt
+import garden.ir.Block
 
 /**
  * The parser accepts the following language
 
                 n ∈ ℤ
+
+        s ∈ Stmt ::= `print` e | s `;` s
         
         e ∈ Expr ::= n | e op e | `(` e `)`
         
@@ -23,8 +27,14 @@ import garden.ir.Num
 object GardenParser extends JavaTokenParsers with PackratParsers {
 
     // parsing interface
-    def apply(s: String): ParseResult[Expr] = parseAll(expr, s)
+    def apply(s: String): ParseResult[Stmt] = parseAll(stmt, s)
 
+    /** statements **/
+    lazy val stmt: PackratParser[Stmt] = 
+      (   rep1sep(stmt, ";") ^^ Block 
+        | "print"~>expr ^^ Print
+        | failure("expected a statement"))
+        
     /** expressions **/
     lazy val expr: PackratParser[Expr] = 
       (   expr~"+"~term ^^ {case l~"+"~r ⇒ l |+| r}

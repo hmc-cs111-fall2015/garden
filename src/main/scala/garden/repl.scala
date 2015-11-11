@@ -2,7 +2,7 @@ package garden
 
 import scala.tools.nsc.EvalLoop
 import garden.parser.GardenParser
-import garden.semantics.ExprInterpreter.eval
+import garden.semantics.StmtInterpreter.eval
 
 object Garden extends EvalLoop with App {
   override def prompt = "> "

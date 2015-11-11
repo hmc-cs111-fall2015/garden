@@ -93,3 +93,26 @@ class GardenExprParserTests extends FunSpec with LangParseMatchers[AST] {
   }
   
 }
+
+class GardenStmtParserTests extends FunSpec with LangParseMatchers[AST] {
+
+  override val parser = 
+    (s: String) ⇒ GardenParser.parseAll(GardenParser.stmt, s)
+    
+  describe("Print statements") {
+    it("can print a simple expression") {
+      program("print 1") should parseAs (Print(1))
+    }
+    
+    it("can print a complex expression") {
+      program("print 1+1") should parseAs (Print(1 |+| 1))
+    }
+  }
+  
+  describe("Blocks") {
+    it("combine two or more statements, separated by a semicolon") {
+      program("print 1+1; print 3") should parseAs (Block(List(Print(1 |+| 1), Print(3))))
+    }
+  }
+  
+}
