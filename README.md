@@ -78,4 +78,4 @@ are
   - [`Functions`][Functions] : adds function definitions and function calls, but the implementation doesn't provide scopes
   - [`DynamicScope`][DynamicScope] : adds support for scopes, but they're [dynamic][Dynamic Scopes]
   - [`StaticScope`][StaticScope] : adds support for [static (lexical) scopes][Static Scopes]
-  - [`Recursion`][Recursion] : adds support for [static (lexical) scopes][Static Scopes]
+  - [`Recursion`][Recursion] : adds support for recursive functions
