@@ -11,6 +11,13 @@ package object ir {
   // to use a number as part of a binary operation...
   implicit def intToExprBuilder(n: Int) = new ExprBuilder(Num(n))
 
+  // to use a variable on its own
+  implicit def symbol2Var(s: Symbol): Var = Var(s.toString.tail)
+  
+  // to use a variable as part of a binary operation...
+  implicit def symbolToExprBuilder(s: Symbol) = 
+    new ExprBuilder(Var(s.toString.tail))
+
   // to build up operations using infix notation from left to right...
   // ExprBuilder saves the left operand and defines methods that 
   //   take the right operand and returns the appropriate Expr 

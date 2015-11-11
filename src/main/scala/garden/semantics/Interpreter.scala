@@ -7,12 +7,15 @@ import garden.ir._
  */
 object ExprInterpreter {
   /** evaluating an expression **/
-  def eval(expr: Expr): Value = expr match {
+  def eval(expr: Expr): Value = evalE(expr, σ0)
+
+  def evalE(expr: Expr, σ: Store): Value = expr match {
     case Num(i)            ⇒ i
-    case Plus(left, right) ⇒ eval(left) + eval(right)
-    case Sub(left, right)  ⇒ eval(left) - eval(right)
-    case Mult(left, right) ⇒ eval(left) * eval(right)
-    case Div(left, right)  ⇒ eval(left) / eval(right)
+    case x: Var            ⇒ σ(x)
+    case Plus(left, right) ⇒ evalE(left, σ) + evalE(right, σ)
+    case Sub(left, right)  ⇒ evalE(left, σ) - evalE(right, σ)
+    case Mult(left, right) ⇒ evalE(left, σ) * evalE(right, σ)
+    case Div(left, right)  ⇒ evalE(left, σ) / evalE(right, σ)
   }
 }
 
@@ -21,37 +24,40 @@ object ExprInterpreter {
  */
 
 object StmtInterpreter {
-  import ExprInterpreter.{eval ⇒ evalE}
+  import ExprInterpreter.evalE
   
   /** evaluating a statement **/
-  def eval(stmt: Stmt): Result = stmt match {
-    case Print(e)         ⇒ evalPrint(e)
-    case Block(stmts)     ⇒ evalBlock(stmts)
-    case If0(e, s_t, s_f) ⇒ evalIf0(e, s_t, s_f)
+  def eval(stmt: Stmt): Result = evalS(stmt, σ0)
+
+  def evalS(stmt: Stmt, σ: Store): Result = stmt match {
+    case Print(e)         ⇒ evalPrint(e, σ)
+    case Block(stmts)     ⇒ evalBlock(stmts, σ)
+    case If0(e, s_t, s_f) ⇒ evalIf0(e, s_t, s_f, σ)
   }
 
   /** print **/
-  def evalPrint(expr: Expr): Result = {
+  def evalPrint(expr: Expr, σ: Store): Result = {
     // (1) evaluate the expression
-    val v = evalE(expr)
+    val v = evalE(expr, σ)
 
     // (2) print the result
     println(v)
   }
   
   /** blocks **/
-  def evalBlock(stmts: Seq[Stmt]): Result = 
-    stmts foreach eval
+  def evalBlock(stmts: Seq[Stmt], σ: Store): Result = 
+    stmts foreach {evalS(_, σ)}
     
   /** if0 **/
-  def evalIf0(condition: Expr, trueBranch: Stmt, falseBranch: Stmt) = {
+  def evalIf0(condition: Expr, trueBranch: Stmt, falseBranch: Stmt,
+              σ: Store) = {
     // (1) evaluate condition
-    val conditionValue = evalE(condition)
+    val conditionValue = evalE(condition, σ)
     
     // (2) based on condition's value, evaluate true or false branch
     if (conditionValue == 0)
-      eval(trueBranch)
+      evalS(trueBranch, σ)
     else 
-      eval(falseBranch)
+      evalS(falseBranch, σ)
   }
 }

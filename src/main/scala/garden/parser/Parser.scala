@@ -10,21 +10,23 @@ import garden.ir.Print
 import garden.ir.Stmt
 import garden.ir.Block
 import garden.ir.If0
+import garden.ir.Var
 
 /**
  * The parser accepts the following language
 
-                n ∈ ℤ
+                n ∈ ℤ     x ∈ Name
 
         s ∈ Stmt ::= `print` e | s `;` s
                   |  `if0` `(` e `)` `then` `{` s `}` `else` `{` s `}`      
         
-        e ∈ Expr ::= n | e op e | `(` e `)`
+        e ∈ Expr ::= n | x | e op e | `(` e `)`
         
         op ∈ Operator ::= `+` | `-` | `*` | `/`
 
  * The parser ignores whitespace. 
  * ℤ is parsed using JavaTokenParsers' wholeNumber parser.
+ * Name is parsed using JavaTokenParsers' ident parser.
  */
 object GardenParser extends JavaTokenParsers with PackratParsers {
 
@@ -59,9 +61,13 @@ object GardenParser extends JavaTokenParsers with PackratParsers {
     // factors
     lazy val fact: PackratParser[Expr] =
       (   number
+        | variable
         | "("~>expr<~")" 
         | failure("expected an expression"))
         
+    // variables
+    def variable: Parser[Var] = ident ^^ Var
+
     // numbers
     def number: Parser[Num] = wholeNumber ^^ {s ⇒ Num(s.toInt)}
  }

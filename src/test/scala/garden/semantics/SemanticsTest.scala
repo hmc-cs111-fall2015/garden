@@ -112,6 +112,16 @@ class GardenExprSemanticsTests extends FunSpec
     }
 
   }
+  
+  describe("Variables") {
+    it("constants are resolved") {
+      program("LtUaE") should compute(42)
+    }
+
+    it("unbound variables are errors") {
+      program("x") should raiseError[LookupException]
+    }
+  }
 }
 
 class GardenStmtSemanticsTests extends FunSpec
@@ -124,7 +134,7 @@ class GardenStmtSemanticsTests extends FunSpec
 
   describe("Blocks") {
     it("combine two or more statements, separated by a semicolon") {
-      program("print 1+1; print 3") should compute (())
+      program("print 1+1; print LtUaE") should compute (())
     }
   }
   

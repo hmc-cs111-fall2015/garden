@@ -92,6 +92,15 @@ class GardenExprParserTests extends FunSpec with LangParseMatchers[AST] {
 
   }
   
+  describe("Variables") {
+
+    it("are valid expressions") {
+      program("x") should parseAs ( 'x )
+    }
+
+  }
+
+  
 }
 
 class GardenStmtParserTests extends FunSpec with LangParseMatchers[AST] {
